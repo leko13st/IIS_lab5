@@ -16,8 +16,8 @@ namespace lab5_ExpertSystem
          
             slois = new List<Sloi>(); //создаём массив слоёв
             Createinput(); //создаём слой входных нейронов
-            CreateSloi(); //слой выходных нейронов
-            Createoutput(); //и скрытые слои
+            CreateSloi(); //и скрытые слои
+            Createoutput(); //слой выходных нейронов
         }
 
         public void Createinput() //метод создания входного слоя

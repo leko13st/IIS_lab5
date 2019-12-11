@@ -102,14 +102,18 @@ namespace lab5_ExpertSystem
         {
             var y = 0;
             var yy = FeedForvard(inputs);
-            if (yy.name == s) { y = 1; }
-            var dif = yy.Output - y;
-
+            double delt = 0;
+            int k1 = 0;
             foreach (var neuron in slois.Last().neirons)
             {
+                if (neuron.name == s) y = 1;
+                else y = 0;
+                var dif = neuron.Output - y;
+                delt += dif;
+                k1++;
                 neuron.Obuchenie(dif, Opisanie.n);
             }
-
+            delt = delt / k1;
             for (int j = slois.Count - 2; j >= 0; j--)
             {
                 var sloi = slois[j];
@@ -126,7 +130,7 @@ namespace lab5_ExpertSystem
                     }
                 }
             }
-            return dif * dif;
+            return delt*delt;
         }
     }
 }

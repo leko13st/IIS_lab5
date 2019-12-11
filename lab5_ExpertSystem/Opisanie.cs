@@ -8,10 +8,10 @@ namespace lab5_ExpertSystem
 {
     class Opisanie
     {
-        public int inputCount { get; }
-        public int outputCount { get; }
-        public double n { get; }
-        public List<int> sloiCount { get; }
+        public int inputCount { get; } //кол-во нейронов во входном слое
+        public int outputCount { get; } //кол-во нейронов в выходном слое
+        public double n { get; } //скорость обучения
+        public List<int> sloiCount { get; } //кол-во слоёв в скрытом слое
         public Opisanie(int input, int output, double _n, params int[] slois)
         {
             inputCount = input;

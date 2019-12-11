@@ -8,19 +8,19 @@ namespace lab5_ExpertSystem
 {
     class Network
     {
-        public List<Sloi> slois { get; }
-        public Opisanie Opisanie { get; }
+        public List<Sloi> slois { get; } //массив слоёв
+        public Opisanie Opisanie { get; } //класс, отвечающий за параметры нейронной сети
         public Network(Opisanie opisanie)
         {
             Opisanie = opisanie;
          
-            slois = new List<Sloi>();
-            Createinput();
-            CreateSloi();
-            Createoutput();
+            slois = new List<Sloi>(); //создаём массив слоёв
+            Createinput(); //создаём слой входных нейронов
+            CreateSloi(); //слой выходных нейронов
+            Createoutput(); //и скрытые слои
         }
 
-        public void Createinput()
+        public void Createinput() //метод создания входного слоя
         {
             var neirons = new List<Neiron>();
             for (int i = 0; i < Opisanie.inputCount; i++)
@@ -32,7 +32,7 @@ namespace lab5_ExpertSystem
             slois.Add(sloi);
         }
 
-        public void Createoutput()
+        public void Createoutput() //метод создания выходного слоя
         {
             var neirons = new List<Neiron>();
             var lastSloi = slois.Last();
@@ -46,7 +46,7 @@ namespace lab5_ExpertSystem
             slois.Add(sloi);
         }
 
-        public void CreateSloi()
+        public void CreateSloi() //метод создания скрытых (промежуточных) слоёв
         {
             for (int j = 0; j < Opisanie.sloiCount.Count; j++)
             {
@@ -63,17 +63,17 @@ namespace lab5_ExpertSystem
         }
 
 
-        public Neiron FeedForvard(params double[] inputSignals)
+        public Neiron FeedForvard(params double[] inputSignals) //метод подсчёта значения нейросети
         {
-            for (int i = 0; i < inputSignals.Length; i++)
+            for (int i = 0; i < inputSignals.Length; i++) //подсчёт для входного слоя
             {
                 var signal = new List<double>() { inputSignals[i] };
                 var neuron = slois[0].neirons[i];
 
-                neuron.FeedForward(signal);
+                neuron.FeedForward(signal); 
             }
 
-            for (int i = 1; i < slois.Count; i++)
+            for (int i = 1; i < slois.Count; i++) //подсчёт для остальных слоёв
             {
                 var predSloi = slois[i - 1].GetSignals();
                 var sloi = slois[i];
@@ -84,10 +84,10 @@ namespace lab5_ExpertSystem
                 }
             }
 
-            return slois.Last().neirons.OrderByDescending(n => n.Output).First();
+            return slois.Last().neirons.OrderByDescending(n => n.Output).First(); //выбор нейрона с наибольшим выходным значением
         }
 
-        public double Learn(List <Tuple<string, double[]>> dataset, int k)
+        public double Learn(List <Tuple<string, double[]>> dataset, int k) //метод обучения
         {
             var error = 0.0;
             for (int i = 0; i < k; i++)
@@ -99,23 +99,23 @@ namespace lab5_ExpertSystem
             return result;
         }
 
-        private double MethodORO (string s, params double[] inputs)
+        private double MethodORO (string s, params double[] inputs) //метод обратного распространения ошибки
         {
             var y = 0;
             var yy = FeedForvard(inputs);
             double delt = 0;
             int k1 = 0;
-            foreach (var neuron in slois.Last().neirons)
+            foreach (var neuron in slois.Last().neirons) //пересчитываем значения весов для последнего слоя (выходного)
             {
                 if (neuron.name == s) y = 1;
                 else y = 0;
-                var dif = neuron.Output - y;
+                var dif = neuron.Output - y; //вычисляем отклонение от требуемого значения
                 delt += dif;
                 k1++;
-                neuron.Obuchenie(dif, Opisanie.n);
+                neuron.Obuchenie(dif, Opisanie.n);//пересчитываем веса для нейрона
             }
             delt = delt / k1;
-            for (int j = slois.Count - 2; j >= 0; j--)
+            for (int j = slois.Count - 2; j >= 0; j--) //для остальных слоёв
             {
                 var sloi = slois[j];
                 var prsloi = slois[j + 1];

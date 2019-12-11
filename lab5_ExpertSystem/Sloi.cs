@@ -9,15 +9,15 @@ namespace lab5_ExpertSystem
 {
     class Sloi
     {
-        public List<Neiron> neirons { get; }
-        public int Count => neirons.Count;
+        public List<Neiron> neirons { get; } //массив нейронов
+        public int Count => neirons.Count; //кол-во нейронов в слое
 
         public Sloi (List<Neiron> _neirons, int type)
         {
             neirons = _neirons;
         }
 
-        public List<double> GetSignals()
+        public List<double> GetSignals() //получение тейронов предыдущего слоя
         {
             var result = new List<double>();
             foreach(var neuron in neirons)

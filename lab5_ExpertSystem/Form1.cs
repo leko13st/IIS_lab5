@@ -17,16 +17,15 @@ namespace lab5_ExpertSystem
         {
             InitializeComponent();
             bitmap = new Bitmap(150, 150);
-            var opisanie = new Opisanie(125, 8, 16);
-            var newNetwork = new Network(opisanie);
+            opisanie = new Opisanie(100, 1, 0.1, 16);
+            newNetwork = new Network(opisanie);
         }
 
-        
-        List<Point> points = new List<Point>();
+        Opisanie opisanie;
+        Network newNetwork;
         Bitmap bitmap;
         int x1, y1;
         string answer = null;
-        public int[,] X = new int[15, 15];
         List<double> input = new List<double>();
         private void Form1_Load(object sender, EventArgs e)
         {
@@ -37,20 +36,20 @@ namespace lab5_ExpertSystem
         {
             listBox1.Items.Clear();
             input.Clear();
-            for (int i = 0; i < 15; i++)
+            for (int i = 0; i < 10; i++)
             {
-                for (int j = 0; j < 15; j++)
+                for (int j = 0; j < 10; j++)
                 {
                     listBox1.Items.Add("");
-                    int n = (bitmap.GetPixel(i*10, j*10).ToArgb());
+                    int n = (bitmap.GetPixel(j*15, i*15).ToArgb());
                     if (n >= -1) n = 0;
                     else n = 1;
                     input.Add(n);
-                    listBox1.Items[j] = listBox1.Items[j] + " " + Convert.ToString(n);
-                    X[i, j] = n;
+                    listBox1.Items[i] = listBox1.Items[i] + " " + Convert.ToString(n);
                 }
             }
-            label1.Text = "Это цифра " + answer;
+            answer = newNetwork.FeedForvard(input.ToArray()).name;
+            label1.Text = "Это цифра " + answer.ToString();
         }
 
         private void button2_Click(object sender, EventArgs e)
@@ -62,21 +61,15 @@ namespace lab5_ExpertSystem
 
         private void button3_Click(object sender, EventArgs e)
         {
-            string s = Convert.ToString(textBox1.Text);
-            listBox1.Items.Clear();
-            input.Clear();
-            for (int i = 0; i < 15; i++)
+            var dataset = new List<Tuple<string, double[]>>
             {
-                for (int j = 0; j < 15; j++)
-                {
-                    listBox1.Items.Add("");
-                    int n = (bitmap.GetPixel(i * 10, j * 10).ToArgb());
-                    if (n >= -1) n = 0;
-                    else n = 1;
-                    input.Add(n);
-                    listBox1.Items[j] = listBox1.Items[j] + " " + Convert.ToString(n);
-                }
-            }
+                new Tuple<string, double[]>("0", new double[]{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1, 1, 0, 0, 0, 0, 1, 1, 0, 0, 1, 1, 0, 0, 0, 0, 1, 1, 0, 0, 1, 1, 0, 0, 0, 0, 1, 1, 0, 0, 1, 1, 0, 0, 0, 0, 1, 1, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }),
+                new Tuple<string, double[]>("0", new double[]{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0, 1, 1, 1, 0, 1, 1, 1, 1, 0, 0, 1, 1, 0, 0, 0, 0, 1, 1, 0, 0, 0, 1, 0, 0, 0, 0, 1, 1, 0, 0, 1, 1, 0, 0, 0, 0, 1, 1, 0, 0, 1, 1, 0, 0, 0, 0, 1, 1, 0, 0, 1, 1, 0, 1, 1, 1, 1, 1, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }),
+                new Tuple<string, double[]>("0", new double[]{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 1, 1, 0, 0, 0, 1, 1, 1, 1, 0, 1, 1, 1, 0, 0, 1, 1, 0, 0, 0, 0, 1, 1, 0, 0, 1, 1, 0, 0, 0, 0, 0, 1, 0, 0, 1, 1, 0, 0, 0, 0, 1, 1, 0, 0, 1, 1, 0, 0, 0, 0, 1, 1, 0, 0, 1, 1, 1, 1, 1, 1, 0, 1, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 })
+
+            };
+            var res = newNetwork.Learn(dataset, 10);
+            textBox1.Text = res.ToString();
         }
 
         private void pictureBox1_MouseMove(object sender, MouseEventArgs e)

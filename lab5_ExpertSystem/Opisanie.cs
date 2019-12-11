@@ -10,11 +10,13 @@ namespace lab5_ExpertSystem
     {
         public int inputCount { get; }
         public int outputCount { get; }
+        public double n { get; }
         public List<int> sloiCount { get; }
-        public Opisanie(int input, int output, params int[] slois)
+        public Opisanie(int input, int output, double _n, params int[] slois)
         {
             inputCount = input;
             outputCount = output;
+            n = _n;
             sloiCount = new List<int>();
             sloiCount.AddRange(slois);
         }

@@ -13,6 +13,8 @@ namespace lab5_ExpertSystem
         public Network(Opisanie opisanie)
         {
             Opisanie = opisanie;
+         
+            slois = new List<Sloi>();
             Createinput();
             CreateSloi();
             Createoutput();
@@ -37,6 +39,7 @@ namespace lab5_ExpertSystem
             for (int i = 0; i < Opisanie.outputCount; i++)
             {
                 var neuron = new Neiron(lastSloi.Count, 3);
+                neuron.name = i.ToString();
                 neirons.Add(neuron);
             }
             var sloi = new Sloi(neirons, 3);
@@ -59,9 +62,9 @@ namespace lab5_ExpertSystem
             }
         }
 
-        public Neiron FeedForvard(List<double> inputSignals)
+        public Neiron FeedForvard(params double[] inputSignals)
         {
-            for (int i = 0; i < inputSignals.Count; i++)
+            for (int i = 0; i < inputSignals.Length; i++)
             {
                 var signal = new List<double>() { inputSignals[i] };
                 var neuron = slois[0].neirons[i];
@@ -81,6 +84,49 @@ namespace lab5_ExpertSystem
             }
 
             return slois.Last().neirons.OrderByDescending(n => n.Output).First();
+        }
+
+        public double Learn(List <Tuple<string, double[]>> dataset, int k)
+        {
+            var error = 0.0;
+            for (int i = 0; i < k; i++)
+            {
+                foreach (var data in dataset)
+                    error += MethodORO(data.Item1, data.Item2);
+            }
+            var result = error / k;
+            return result;
+        }
+
+        private double MethodORO (string s, params double[] inputs)
+        {
+            var y = 0;
+            var yy = FeedForvard(inputs);
+            if (yy.name == s) { y = 1; }
+            var dif = yy.Output - y;
+
+            foreach (var neuron in slois.Last().neirons)
+            {
+                neuron.Obuchenie(dif, Opisanie.n);
+            }
+
+            for (int j = slois.Count - 2; j >= 0; j--)
+            {
+                var sloi = slois[j];
+                var prsloi = slois[j + 1];
+
+                for (int i = 0; i < sloi.Count; i++)
+                {
+                    var neuron = sloi.neirons[i];
+                    for (int k = 0; k < prsloi.Count; k++)
+                    {
+                        var prneuron = prsloi.neirons[k];
+                        var error = prneuron.Ws[i] * prneuron.delta;
+                        neuron.Obuchenie(error, Opisanie.n);
+                    }
+                }
+            }
+            return dif * dif;
         }
     }
 }
